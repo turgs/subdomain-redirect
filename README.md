@@ -7,8 +7,7 @@ Everything is within docker-compose, so you need Docker!
 You'll first need to run the first-time setups, to create the docker container and the seed data:
 
 ```bash
-docker-compose build
-docker-compose run --rm web bundle install
+docker-compose build web
 docker-compose run --rm web bundle exec rails runner "org = Organisation.create!(name: 'Example Organisation', subdomain: 'example', creator: 'example'); user = User.create!(name: 'Jo Citizen', email: 'user@example.com', password: 'user@example.com'); OrganisationUser.create!(user: user, organisation: org)"
 ```
 
