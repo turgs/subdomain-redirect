@@ -35,7 +35,7 @@ What I want is for
 
 I'm missing something in my implementation, because, I can see that the authentication is successful, and the app log shows it's redirecting to "http://example.lvh.me:3000/users/1", but then when that controller loads, the session must be different, because the app thinks the user isn't logged in.
 
-I _have_ alread set:
+I _have_ already set:
 
 - _config/application.rb_ to `config.session_store :cookie_store, key: '_my_app_session', domain: :all, tld_length: 2`
 - _config/application.rb_ to `config.hosts << ".lvh.me"`
@@ -48,4 +48,4 @@ When the user submits the login form, it:
 
 2. That then loads the show action in the Users controller, which calls the ApplicationController before_action [require_login](https://github.com/turgs/subdomain-redirect/blob/master/app/controllers/application_controller.rb#L4-L9).
 
-3. At that point it doesn't think the session is set, so it redirects to the login page. :(
+3. At that point, the Session controller creates the session cookie and redirects to the subdomain URL, which then runs the `before_action :require_login`, and investigating that, the session isn't set.. any I've troubleshooted all I can think of. I'm missing something and need someone else's eyes.
