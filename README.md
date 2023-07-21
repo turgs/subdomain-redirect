@@ -4,10 +4,12 @@
 
 Everything is within docker-compose, so you need Docker!
 
-You'll first need to run a setup script, to create the docker container and the seed data:
+You'll first need to run the first-time setups, to create the docker container and the seed data:
 
 ```bash
-...
+docker-compose build
+docker-compose run --rm web bundle install
+docker-compose run --rm web bundle exec rails runner "org = Organisation.create!(name: 'Example Organisation', subdomain: 'example', creator: 'example'); user = User.create!(name: 'Jo Citizen', email: 'user@example.com', password: 'user@example.com'); OrganisationUser.create!(user: user, organisation: org)"
 ```
 
 Then just:
@@ -16,12 +18,21 @@ Then just:
 docker-compose up
 ```
 
-## Summary of the problem
+Navigate to [http://login.lvh.me:3000/sessions/new](http://login.lvh.me:3000/sessions/new)
+
+Login with the sample data username/password of:
+
+- Username: `user@example.com`
+- Password: `user@example.com`
+
+## Desired outcome
 
 What I want is for
 
 1. users to login at `http://login.lvh.me:3000/sessions/new` (note, the subdomain `login`)
-2. one their authenticated, they get redirected to their subdomain, e.g. `http://my-org.lvh.me:3000/`.
+2. once they're authenticated, they get redirected to their subdomain, e.g. `http://my-org.lvh.me:3000/`.
+
+## Problem
 
 I'm missing something in my implementation, because, I can see that the authentication is successful, and the app log shows it's redirecting to "http://example.lvh.me:3000/users/1", but then when that controller loads, the session must be different, because the app thinks the user isn't logged in.
 
