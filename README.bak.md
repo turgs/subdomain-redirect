@@ -63,3 +63,20 @@ web_1    |
 web_1    | ActionController::RoutingError (No route matches [OPTIONS] "/users/1"):
 
 
+
+Add to config/application.rb
+`config.session_store :cookie_store, key: '_app_session', domain: :all, tld_length: 2`
+
+
+OK, so that fixes the cookie session problem. When I manually go to
+example.lvh.me:3000/users it works fine.
+
+
+I was getting a "Can't verify CSRF token authenticity." error during login and logout.
+I fixed this by adding the following to app/controllers/application_controller.rb
+`protect_from_forgery prepend: true`
+
+
+Now it's just a routing problem, which seems to be CORS due to turbo making the request
+
+- add gem "rack-cors"

@@ -1,10 +1,10 @@
 class ApplicationController < ActionController::Base
   before_action :require_login
+  protect_from_forgery prepend: true
   def require_login
-    puts
-    puts "---- ApplicationController#require_login #{request&.subdomain} ----"
-    puts
+    Rails.logger.info "---- ApplicationController#require_login #{request&.subdomain} ----"
     return if current_user.present?
+    Rails.logger.info 'You need to login first.'
     redirect_to_login(alert: 'Need to login first.') and return true
   end
 
@@ -17,9 +17,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def redirect_to_login(alert: nil)
-    puts
-    puts "---- ApplicationController#redirect_to_login #{request&.subdomain} ----"
-    puts
+    Rails.logger.info "---- ApplicationController#redirect_to_login #{request&.subdomain} ----"
     redirect_to(new_session_path, subdomain: "login", allow_other_host: true, alert: alert)
   end
 end 

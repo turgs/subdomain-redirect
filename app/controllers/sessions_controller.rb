@@ -3,14 +3,13 @@ class SessionsController < ApplicationController
   
   def new
     if request&.subdomain != "login"
-      redirect_to new_session_url(subdomain: "login"), allow_other_host: true, flash: flash and return
+      flash = flash
+      redirect_to new_session_url(subdomain: "login"), allow_other_host: true and return
     end
   end
 
   def create
-    puts
-    puts "---- SessionsController#create #{request&.subdomain} ----"
-    puts
+    Rails.logger.info "---- SessionsController#create #{request&.subdomain} ----"
 
     user = User.find_by_email(params[:email].downcase)
 
