@@ -23,7 +23,7 @@ To add subdomains per org
     ```
     redirect_to user_url(user)
     to 
-    redirect_to user_url(subdomain: user.org.subdomain), allow_other_host: true
+    redirect_to user_url(user, subdomain: user.organisations.first.subdomain), allow_other_host: true
     ```
 
   - edit `app/controllers/sessions_controller.rb#destroy` to change this
@@ -42,3 +42,41 @@ To add subdomains per org
   
 3. This will then likely not log you in, cos the session is different for each subdomain.
 
+For all logins to only be at the login subdomain
+
+app/controllers/sessions_controller.rb#new
+  def new
+    if request&.subdomain != "login"
+      redirect_to new_session_url(subdomain: "login"), allow_other_host: true, flash: flash and return
+    end
+  end
+
+
+
+It DOES redirect, but says 
+web_1    | Redirected to http://example.lvh.me:3000/users/1
+web_1    | Completed 302 Found in 393ms (ActiveRecord: 4.9ms | Allocations: 20921)
+web_1    | 
+web_1    | 
+web_1    | Started OPTIONS "/users/1" for 172.19.0.1 at 2023-07-21 02:19:58 +0000
+web_1    |   
+web_1    | ActionController::RoutingError (No route matches [OPTIONS] "/users/1"):
+
+
+
+Add to config/application.rb
+`config.session_store :cookie_store, key: '_app_session', domain: :all, tld_length: 2`
+
+
+OK, so that fixes the cookie session problem. When I manually go to
+example.lvh.me:3000/users it works fine.
+
+
+I was getting a "Can't verify CSRF token authenticity." error during login and logout.
+I fixed this by adding the following to app/controllers/application_controller.rb
+`protect_from_forgery prepend: true`
+
+
+Now it's just a routing problem, which seems to be CORS due to turbo making the request
+
+- add gem "rack-cors"

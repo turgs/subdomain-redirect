@@ -9,6 +9,14 @@ Bundler.require(*Rails.groups)
 module App
   class Application < Rails::Application
     config.hosts << ".lvh.me"
+    config.middleware.use Rack::Cors do
+      allow do
+        origins /http:\/\/(.*?)\.lvh\.me/
+        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      end
+    end
+
+    config.session_store :cookie_store, key: '_app_session', domain: :all, tld_length: 2
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 

@@ -4,6 +4,9 @@ set -xe
 sed -i 's~# gem "bcrypt", "~gem "bcrypt", "~' Gemfile
 docker-compose exec web bundle install
 
+# allow webconsole in dev
+sed -i 's~Rails.application.configure do~&\n  config.web_console.permissions = "0.0.0.0/0"~' config/environments/development.rb
+
 # Scaffold to generate a User
 docker-compose exec web bundle exec rails g scaffold User name:string email:string password_digest:string
 
