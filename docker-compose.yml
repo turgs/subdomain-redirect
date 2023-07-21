@@ -1,0 +1,40 @@
+version: '3.5'
+
+services:
+
+  web:
+    tty: true
+    stdin_open: true
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - gem_cache:/gems
+    ports:
+      - "3000:3000"
+
+  chown:
+    # change app genrated files to be owned by me, not root
+    image: ubuntu
+    volumes:
+      - .:/usr/src/app
+    privileged: true
+    command: > 
+      bash -c "\
+        set -e
+        while true; 
+        do
+          # chmod +x /usr/src/app/node_modules/.bin/*
+          find /usr/src/app ! -user 1000 | awk 'NR>1' | \
+            egrep -v "/usr/src/app/Guardfile" | \
+            egrep -v "/usr/src/app/tmp" | \
+            egrep -v "/usr/src/app/.gitd" | \
+            xargs -i chown -cR 1000:1000 {} # 2>/dev/null
+          sleep 1; 
+        done
+      "
+      
+volumes:
+  gem_cache:
+
+networks:
+  default:

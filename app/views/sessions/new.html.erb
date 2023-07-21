@@ -1,0 +1,17 @@
+<h1>Log in</h1>
+<%= form_with(url: sessions_path) do |form| %>
+
+  <div class="my-5">
+    <%= form.label :email, style: "display:block" %>
+    <%= form.text_field :email, value: 'user@example.com' %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :password, style: "display:block" %>
+    <%= form.text_field :password, value: 'user@example.com' %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
